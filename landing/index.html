@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RosterDuty — Restaurant Operations, Automated</title>
+  <meta name="description" content="Replace paper checklists with smart digital workflows. 50+ ready-made templates, real-time tracking, multi-location support. 3 months free trial — no credit card." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:         #0A0A0F;
+      --bg2:        #0e0e1a;
+      --bg3:        #111120;
+      --orange:     #FF5C28;
+      --orange-dim: #cc4a20;
+      --blue:       #4F8EF7;
+      --blue-dim:   #3a70d4;
+      --white:      #ffffff;
+      --muted:      #9090a8;
+      --border:     rgba(255,255,255,0.08);
+      --glass-bg:   rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.10);
+      --radius:     16px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ============================================================
+       TYPOGRAPHY HELPERS
+    ============================================================ */
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .section-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .text-center { text-align: center; }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 96px 0;
+    }
+
+    /* ============================================================
+       SCROLL ANIMATION BASE
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--orange-dim);
+      transform: scale(1.05);
+      box-shadow: 0 0 28px rgba(255,92,40,0.55);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255,255,255,0.25);
+    }
+
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.6);
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    .btn-lg {
+      padding: 18px 40px;
+      font-size: 1.15rem;
+    }
+
+    /* ============================================================
+       STICKY NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: background var(--transition), border-bottom var(--transition), padding var(--transition), box-shadow var(--transition);
+    }
+
+    #navbar.scrolled {
+      background: rgba(10, 10, 15, 0.97);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.03em;
+    }
+
+    .nav-logo span {
+      color: var(--orange);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      flex-shrink: 0;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    /* Mobile Nav */
+    .nav-mobile {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(10,10,15,0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .nav-mobile.open {
+      display: flex;
+    }
+
+    .nav-mobile a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      transition: color var(--transition);
+    }
+
+    .nav-mobile a:hover {
+      color: var(--orange);
+    }
+
+    .nav-mobile-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--white);
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 120px;
+      padding-bottom: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated gradient background */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,92,40,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 10% 60%, rgba(79,142,247,0.08) 0%, transparent 60%);
+      animation: heroBg 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroBg {
+      0%   { opacity: 1; transform: scale(1) rotate(0deg); }
+      100% { opacity: 0.8; transform: scale(1.05) rotate(1deg); }
+    }
+
+    /* Floating blobs */
+    #hero::after {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,142,247,0.06) 0%, transparent 70%);
+      top: -200px;
+      right: -200px;
+      animation: blobFloat 10s ease-in-out infinite;
+    }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0); }
+      50%       { transform: translate(-30px, 30px); }
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,92,40,0.12);
+      border: 1px solid rgba(255,92,40,0.3);
+      border-radius: 100px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--orange);
+      width: fit-content;
+    }
+
+    .hero-badge .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--orange);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-h1 .highlight {
+      background: linear-gradient(135deg, var(--orange) 0%, #ff8c5a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 520px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .trust-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .trust-bar span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trust-bar .check {
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 4px;
+    }
+
+    .stars {
+      color: #FBBF24;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .social-proof-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .social-proof-text strong {
+      color: var(--white);
+    }
+
+    /* Hero counters */
+    .hero-counters {
+      display: flex;
+      gap: 32px;
+      margin-top: 8px;
+    }
+
+    .counter-item {
+      text-align: left;
+    }
+
+    .counter-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .counter-value .plus {
+      color: var(--orange);
+    }
+
+    .counter-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* Dashboard Mockup */
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dashboard-mockup {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .mockup-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mockup-dot.red   { background: #ff5f57; }
+    .mockup-dot.yellow { background: #ffbd2e; }
+    .mockup-dot.green  { background: #28c840; }
+
+    .mockup-title {
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .mockup-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mockup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .mockup-day {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .mockup-progress-label {
+      font-size: 0.75rem;
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .mockup-progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .mockup-progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--orange), #ff8c5a);
+      width: 72%;
+      animation: progressGrow 2s ease 1s forwards;
+      transform-origin: left;
+    }
+
+    @keyframes progressGrow {
+      from { width: 0; }
+      to   { width: 72%; }
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .checklist-item.done {
+      border-color: rgba(34,197,94,0.2);
+      background: rgba(34,197,94,0.04);
+    }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+
+    .checklist-item.done .check-box {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: white;
+    }
+
+    .check-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .checklist-item.done .check-text {
+      color: rgba(255,255,255,0.5);
+      text-decoration: line-through;
+    }
+
+    .check-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    .mockup-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .mockup-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .mockup-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .mockup-stat-value {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .mockup-stat-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Floating notification */
+    .floating-notif {
+      position: absolute;
+      bottom: -20px;
+      left: -30px;
+      background: rgba(15, 15, 28, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      animation: floatUp 3s ease-in-out infinite;
+      backdrop-filter: blur(20px);
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .notif-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(34,197,94,0.15);
+      border: 1px solid rgba(34,197,94,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .notif-text {
+      font-size: 0.78rem;
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .notif-sub {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* ============================================================
+       PROBLEM SECTION
+    ============================================================ */
+    #problem {
+      background: var(--bg2);
+      padding: 80px 0;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .pain-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .pain-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,92,40,0.3);
+      box-shadow: 0 20px 40px rgba(255,92,40,0.08);
+    }
+
+    .pain-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .pain-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--white);
+    }
+
+    /* ============================================================
+       FEATURES SECTION
+    ============================================================ */
+    #features {
+      background: var(--bg);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(79,142,247,0.25);
+      box-shadow: 0 24px 60px rgba(79,142,247,0.1);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(79,142,247,0.2), rgba(79,142,247,0.05));
+      border: 1px solid rgba(79,142,247,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       TEMPLATE LIBRARY SECTION
+    ============================================================ */
+    #templates {
+      background: var(--bg2);
+      text-align: center;
+    }
+
+    .template-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 48px 0;
+    }
+
+    .template-badge {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--white);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
+      opacity: 0;
+      animation: badgeFadeIn 0.5s ease forwards;
+    }
+
+    .template-badge:hover {
+      background: rgba(79,142,247,0.1);
+      border-color: rgba(79,142,247,0.4);
+      transform: scale(1.05);
+    }
+
+    @keyframes badgeFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       HOW IT WORKS SECTION
+    ============================================================ */
+    #how-it-works {
+      background: var(--bg);
+    }
+
+    .steps-wrapper {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: start;
+      gap: 0;
+      margin-top: 60px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), #ff8c5a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: white;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 30px rgba(255,92,40,0.4);
+    }
+
+    .step h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .step-connector {
+      display: flex;
+      align-items: center;
+      padding-top: 28px;
+    }
+
+    .connector-line {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--blue));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .connector-line::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+      animation: lineShimmer 2.5s ease-in-out infinite;
+    }
+
+    @keyframes lineShimmer {
+      0%   { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* ============================================================
+       TESTIMONIALS SECTION
+    ============================================================ */
+    #testimonials {
+      background: var(--bg2);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .testimonial-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+
+    .testimonial-stars {
+      color: #FBBF24;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .testimonial-text {
+      font-size: 0.97rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.85);
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .avatar-ms { background: linear-gradient(135deg, #7c3aed, #4F8EF7); }
+    .avatar-jt { background: linear-gradient(135deg, #FF5C28, #ff8c5a); }
+    .avatar-dk { background: linear-gradient(135deg, #059669, #34d399); }
+
+    .author-info .name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .author-info .role {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       PRICING SECTION
+    ============================================================ */
+    #pricing {
+      background: var(--bg);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      backdrop-filter: blur(12px);
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(255,92,40,0.1);
+    }
+
+    .pricing-card.popular {
+      border-color: var(--orange);
+      box-shadow: 0 0 40px rgba(255,92,40,0.15);
+    }
+
+    .pricing-card.popular:hover {
+      box-shadow: 0 24px 60px rgba(255,92,40,0.25);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--orange);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 5px 18px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .free-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,92,40,0.12);
+      border: 1px solid rgba(255,92,40,0.3);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pricing-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .pricing-price {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: -0.03em;
+    }
+
+    .pricing-price sup {
+      font-size: 1.4rem;
+      font-weight: 700;
+      vertical-align: super;
+      line-height: 1;
+    }
+
+    .pricing-price .per {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .pricing-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex: 1;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.4;
+    }
+
+    .pricing-features .check-icon {
+      color: #22c55e;
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .pricing-cta {
+      width: 100%;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    /* ============================================================
+       FAQ SECTION
+    ============================================================ */
+    #faq {
+      background: var(--bg2);
+    }
+
+    .faq-list {
+      max-width: 760px;
+      margin: 56px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+
+    .faq-item.open {
+      border-color: rgba(79,142,247,0.3);
+    }
+
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--white);
+      gap: 16px;
+      transition: color var(--transition);
+      user-select: none;
+    }
+
+    .faq-question:hover {
+      color: var(--blue);
+    }
+
+    .faq-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform var(--transition), background var(--transition);
+      font-size: 1rem;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      background: rgba(79,142,247,0.15);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+    }
+
+    .faq-answer-inner {
+      padding: 0 24px 20px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ============================================================
+       FINAL CTA BANNER
+    ============================================================ */
+    #cta-banner {
+      padding: 100px 0;
+      background: linear-gradient(135deg, #FF5C28 0%, #cc2200 40%, #1a1a3e 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 80% 50%, rgba(79,142,247,0.1) 0%, transparent 60%);
+    }
+
+    .cta-banner-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .cta-banner-inner h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+    }
+
+    .cta-banner-inner p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 520px;
+    }
+
+    .cta-banner-trust {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px 24px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      margin-top: 8px;
+    }
+
+    .cta-banner-trust span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cta-banner-trust .check {
+      color: rgba(255,255,255,0.9);
+      font-weight: 700;
+    }
+
+    #cta-banner .btn-primary {
+      background: white;
+      color: var(--orange);
+      font-size: 1.15rem;
+      padding: 18px 44px;
+    }
+
+    #cta-banner .btn-primary:hover {
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 0 40px rgba(255,255,255,0.3);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: #050508;
+      border-top: 1px solid var(--border);
+      padding: 64px 0 32px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .logo {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand .logo span {
+      color: var(--orange);
+    }
+
+    .footer-brand .tagline {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      max-width: 260px;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 14px;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+
+    .social-link:hover {
+      background: rgba(79,142,247,0.1);
+      border-color: rgba(79,142,247,0.3);
+      color: var(--blue);
+    }
+
+    .social-link svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .footer-col h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul li a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--white);
+    }
+
+    .footer-col .email-link {
+      font-size: 0.88rem;
+      color: var(--blue);
+      transition: color var(--transition);
+    }
+
+    .footer-col .email-link:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-copy {
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .footer-legal-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-legal-links a {
+      font-size: 0.83rem;
+      color: var(--muted);
+      transition: color var(--transition);
+    }
+
+    .footer-legal-links a:hover {
+      color: var(--white);
+    }
+
+    /* ============================================================
+       MOBILE FLOATING CTA
+    ============================================================ */
+    .mobile-cta-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      background: rgba(10,10,15,0.97);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      backdrop-filter: blur(20px);
+      transform: translateY(100%);
+      transition: transform var(--transition);
+    }
+
+    .mobile-cta-bar.visible {
+      transform: translateY(0);
+    }
+
+    .mobile-cta-bar .btn {
+      width: 100%;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE — 768px
+    ============================================================ */
+    @media (max-width: 768px) {
+      section { padding: 64px 0; }
+
+      .nav-links, .nav-cta {
+        display: none;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .hero-counters {
+        gap: 20px;
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .steps-wrapper {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .step-connector {
+        display: none;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .pricing-card.popular {
+        order: -1;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+
+      .footer-brand {
+        grid-column: 1 / -1;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .mobile-cta-bar {
+        display: block;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .hero-ctas .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-brand {
+        grid-column: unset;
+      }
+
+      .hero-h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SECTION: navbar -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">Roster<span>Duty</span></a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a href="/register" class="btn btn-primary nav-cta" style="padding: 11px 22px; font-size: 0.9rem;">Start Free Trial</a>
+      <div class="nav-hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Navigation -->
+<div class="nav-mobile" id="navMobile">
+  <span class="nav-mobile-close" id="navClose" aria-label="Close menu" role="button" tabindex="0">&times;</span>
+  <a href="#features" class="nav-mobile-link">Features</a>
+  <a href="#how-it-works" class="nav-mobile-link">How It Works</a>
+  <a href="#pricing" class="nav-mobile-link">Pricing</a>
+  <a href="#faq" class="nav-mobile-link">FAQ</a>
+  <a href="/register" class="btn btn-primary" style="margin-top: 8px;">Start Free Trial</a>
+</div>
+
+<!-- SECTION: hero -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content reveal">
+        <div class="hero-badge">
+          <div class="dot"></div>
+          3 Months Free — No Credit Card
+        </div>
+
+        <h1 class="hero-h1">
+          Your Restaurant<br />
+          <span class="highlight">Runs Itself.</span><br />
+          You Just Watch.
+        </h1>
+
+        <p class="hero-sub">
+          Replace paper checklists with smart digital workflows. 50+ ready-made templates included — every shift, every task, every location tracked automatically.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="/register" class="btn btn-primary btn-lg">
+            🚀 Start Free — 3 Months Free
+          </a>
+          <a href="#how-it-works" class="btn btn-outline btn-lg">
+            Watch Demo →
+          </a>
+        </div>
+
+        <div class="trust-bar">
+          <span><span class="check">✓</span> No credit card required</span>
+          <span><span class="check">✓</span> Free plan forever</span>
+          <span><span class="check">✓</span> 50+ templates included</span>
+          <span><span class="check">✓</span> Setup in 5 minutes</span>
+          <span><span class="check">✓</span> Cancel anytime</span>
+        </div>
+
+        <div class="hero-social-proof">
+          <div class="stars">★★★★★</div>
+          <div class="social-proof-text">
+            Trusted by <strong>200+</strong> restaurants across <strong>12</strong> countries
+          </div>
+        </div>
+
+        <div class="hero-counters">
+          <div class="counter-item">
+            <div class="counter-value">
+              <span class="counter-num" data-target="200">0</span><span class="plus">+</span>
+            </div>
+            <div class="counter-label">Restaurants</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-value">
+              <span class="counter-num" data-target="12">0</span>
+            </div>
+            <div class="counter-label">Countries</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-value">
+              <span class="counter-num" data-target="50">0</span><span class="plus">+</span>
+            </div>
+            <div class="counter-label">Templates</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" style="transition-delay: 0.2s; position: relative;">
+        <div class="dashboard-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-dot red"></div>
+            <div class="mockup-dot yellow"></div>
+            <div class="mockup-dot green"></div>
+            <div class="mockup-title">RosterDuty — Morning Opening</div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-header">
+              <div class="mockup-day">Today's Shift · Opening</div>
+              <div class="mockup-progress-label">72% Complete</div>
+            </div>
+            <div class="mockup-progress-bar">
+              <div class="mockup-progress-fill"></div>
+            </div>
+
+            <div class="mockup-section-label">Kitchen</div>
+            <div class="checklist-item done">
+              <div class="check-box">✓</div>
+              <div class="check-text">Check fridge temperatures</div>
+              <div class="check-time">07:02</div>
+            </div>
+            <div class="checklist-item done">
+              <div class="check-box">✓</div>
+              <div class="check-text">Sanitize prep surfaces</div>
+              <div class="check-time">07:08</div>
+            </div>
+            <div class="checklist-item done">
+              <div class="check-box">✓</div>
+              <div class="check-text">HACCP log — cold storage</div>
+              <div class="check-time">07:15</div>
+            </div>
+
+            <div class="mockup-section-label">Front of House</div>
+            <div class="checklist-item">
+              <div class="check-box"></div>
+              <div class="check-text">Set tables and fold napkins</div>
+              <div class="check-time">Due 08:00</div>
+            </div>
+            <div class="checklist-item">
+              <div class="check-box"></div>
+              <div class="check-text">Fill condiment stations</div>
+              <div class="check-time">Due 08:00</div>
+            </div>
+
+            <div class="mockup-stats">
+              <div class="mockup-stat">
+                <div class="mockup-stat-value" style="color: #22c55e;">8</div>
+                <div class="mockup-stat-label">Done</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="mockup-stat-value" style="color: #FBBF24;">3</div>
+                <div class="mockup-stat-label">Pending</div>
+              </div>
+              <div class="mockup-stat">
+                <div class="mockup-stat-value" style="color: var(--blue);">4</div>
+                <div class="mockup-stat-label">Staff</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-notif">
+          <div class="notif-icon">✅</div>
+          <div>
+            <div class="notif-text">Task completed</div>
+            <div class="notif-sub">James · Bar Setup · just now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: problem -->
+<section id="problem">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Paper checklists are <span style="color: var(--orange);">killing your standards</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">Every missed task, forgotten log, and skipped procedure adds up. It doesn't have to be this way.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="pain-card reveal" style="transition-delay: 0.1s;">
+        <span class="pain-icon">❌</span>
+        <h3>Staff skip tasks and nobody knows until it's too late</h3>
+      </div>
+      <div class="pain-card reveal" style="transition-delay: 0.2s;">
+        <span class="pain-icon">⏰</span>
+        <h3>Managers waste hours on manual shift reports</h3>
+      </div>
+      <div class="pain-card reveal" style="transition-delay: 0.3s;">
+        <span class="pain-icon">📍</span>
+        <h3>Multi-location consistency is impossible to enforce</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: features -->
+<section id="features">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Everything you need to run a <span style="color: var(--blue);">tight operation</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">Built specifically for restaurants. Every feature designed to save time and prevent costly mistakes.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal" style="transition-delay: 0.05s;">
+        <div class="feature-icon-wrap">✅</div>
+        <h3>Smart Digital Checklists</h3>
+        <p>Replace clipboards with mobile-friendly checklists. Staff complete tasks on their phones — timestamps, photos, and notes captured automatically.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.1s;">
+        <div class="feature-icon-wrap">📋</div>
+        <h3>50+ Ready-Made Templates</h3>
+        <p>From HACCP food safety logs to bar setup and deep-clean schedules — professional templates built by F&B operations experts, ready on day one.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.15s;">
+        <div class="feature-icon-wrap">📊</div>
+        <h3>Real-Time Manager Dashboard</h3>
+        <p>See every location's shift completion status at a glance. Drill into individual tasks, spot patterns, and export reports in seconds.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.2s;">
+        <div class="feature-icon-wrap">👤</div>
+        <h3>Staff Accountability</h3>
+        <p>Every task is timestamped with the staff member who completed it. No more "I thought someone else did it." Full audit trail always available.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.25s;">
+        <div class="feature-icon-wrap">🔔</div>
+        <h3>Instant Alerts</h3>
+        <p>Get notified the moment a critical task is overdue or skipped. Escalate to the right person automatically — before the issue becomes a problem.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay: 0.3s;">
+        <div class="feature-icon-wrap">🏢</div>
+        <h3>Multi-Location Support</h3>
+        <p>Manage 1 or 100 locations from a single account. Standardize procedures across all sites while allowing per-location customization where needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: templates -->
+<section id="templates">
+  <div class="container">
+    <div class="reveal">
+      <h2 class="section-title">Don't have your own checklists? <span style="color: var(--orange);">No problem.</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">
+        Get instant access to 50+ professionally designed templates covering every aspect of restaurant operations. Use them as-is or customize to fit your brand.
+      </p>
+    </div>
+    <div class="template-badges reveal" id="templateBadges">
+      <span class="template-badge">🌅 Opening Procedures</span>
+      <span class="template-badge">🌙 Closing Procedures</span>
+      <span class="template-badge">🧹 Kitchen Cleaning</span>
+      <span class="template-badge">🍺 Bar Setup</span>
+      <span class="template-badge">🧊 HACCP Food Safety</span>
+      <span class="template-badge">🍽️ Server Sidework</span>
+      <span class="template-badge">📦 Inventory Check</span>
+      <span class="template-badge">🔥 Weekly Deep Clean</span>
+      <span class="template-badge">🚿 Bathroom Inspection</span>
+      <span class="template-badge">📋 Manager Walkthrough</span>
+    </div>
+    <div class="reveal">
+      <a href="/register" class="btn btn-primary btn-lg">Browse Templates Free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: how-it-works -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Up and running in <span style="color: var(--orange);">under 10 minutes</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">No technical setup required. No IT department needed. Just sign up and go.</p>
+    </div>
+    <div class="steps-wrapper reveal" style="transition-delay: 0.2s;">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Choose or create your checklists</h3>
+        <p>Pick from 50+ professional templates or build your own from scratch. Add time windows, assign departments, attach photo requirements.</p>
+      </div>
+      <div class="step-connector">
+        <div class="connector-line"></div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Assign to your team</h3>
+        <p>Staff get a dedicated mobile app for iOS &amp; Android. Tasks assigned instantly — they sign in, see what needs doing, and mark it done with photos and comments.</p>
+      </div>
+      <div class="step-connector">
+        <div class="connector-line"></div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Track everything live</h3>
+        <p>Managers see real-time completion rates across every location. Get alerts for overdue tasks. Review historical data to spot recurring issues.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: testimonials -->
+<section id="testimonials">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Restaurant operators <span style="color: var(--blue);">love RosterDuty</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">Real results from real operators running everything from single-site restaurants to multi-unit chains.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal" style="transition-delay: 0.1s;">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"We reduced shift handover issues by 80% in the first month. The manager dashboard alone is worth the subscription — I can see everything without being there."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar avatar-ms">AK</div>
+          <div class="author-info">
+            <div class="name">Andreas K.</div>
+            <div class="role">Operations Director, Nicosia</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay: 0.2s;">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Finally, accountability without the awkward conversations. Staff know everything is logged, so standards have genuinely improved across the board."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar avatar-jt">MN</div>
+          <div class="author-info">
+            <div class="name">Marta N.</div>
+            <div class="role">Restaurant Owner, Wrocław</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay: 0.3s;">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Our HACCP compliance went from stressful to automatic. The food safety templates are exactly what inspectors want to see, and the digital logs save us hours every week."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar avatar-dk">PW</div>
+          <div class="author-info">
+            <div class="name">Piotr W.</div>
+            <div class="role">F&amp;B Manager, Warsaw</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Simple pricing. <span style="color: var(--orange);">Powerful results.</span></h2>
+      <p class="section-sub" style="margin-top: 16px;">Start free for 3 months — no credit card required. All plans include the full template library.</p>
+    </div>
+
+    <!-- Billing toggle -->
+    <div style="display:flex;justify-content:center;margin-bottom:40px;">
+      <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:4px;">
+        <button id="toggle-monthly" onclick="setPricing('monthly')" style="padding:8px 24px;border-radius:9px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;background:#FF5C28;color:#fff;transition:all .2s;">Monthly</button>
+        <button id="toggle-yearly" onclick="setPricing('yearly')" style="padding:8px 24px;border-radius:9px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;background:transparent;color:rgba(255,255,255,0.5);transition:all .2s;">
+          Yearly <span style="margin-left:6px;font-size:11px;background:#22c55e;color:#fff;padding:2px 7px;border-radius:20px;">-20%</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="pricing-card reveal" style="transition-delay: 0.1s;">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price"><sup>€</sup>0<span class="per">/mo</span></div>
+        <div class="pricing-desc">Free forever. Not a trial — a real free plan with no expiry and no credit card.</div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Up to 3 checklist templates</li>
+          <li><span class="check-icon">✓</span> 50+ template library included</li>
+          <li><span class="check-icon">✓</span> 1 location</li>
+          <li><span class="check-icon">✓</span> Up to 5 staff members</li>
+          <li><span class="check-icon">✓</span> 30-day history</li>
+          <li><span class="check-icon">✓</span> Email support</li>
+        </ul>
+        <a href="/register" class="btn btn-outline pricing-cta">Get Started Free</a>
+      </div>
+
+      <!-- Professional -->
+      <div class="pricing-card popular reveal" style="transition-delay: 0.2s;">
+        <div class="popular-badge">⭐ Most Popular</div>
+        <div class="pricing-name">Professional</div>
+        <div class="pricing-price">
+          <sup>€</sup><span class="price-val" data-monthly="9" data-yearly="86">9</span><span class="per price-per">/mo</span>
+        </div>
+        <div class="pricing-save" style="display:none;color:#22c55e;font-size:13px;margin-top:4px;min-height:18px;">Save €22 per year</div>
+        <div class="pricing-desc">For growing restaurants and small chains.</div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Unlimited checklists</li>
+          <li><span class="check-icon">✓</span> Up to 5 locations</li>
+          <li><span class="check-icon">✓</span> Up to 40 staff members</li>
+          <li><span class="check-icon">✓</span> 1-year history storage</li>
+          <li><span class="check-icon">✓</span> Photo task confirmations</li>
+          <li><span class="check-icon">✓</span> Analytics &amp; reports</li>
+          <li><span class="check-icon">✓</span> 50+ template library</li>
+        </ul>
+        <a href="/register" class="btn btn-primary pricing-cta">Get Started Free</a>
+      </div>
+
+      <!-- Corporate -->
+      <div class="pricing-card reveal" style="transition-delay: 0.3s;">
+        <div class="pricing-name">Corporate</div>
+        <div class="pricing-price">
+          <sup>€</sup><span class="price-val" data-monthly="49" data-yearly="470">49</span><span class="per price-per">/mo</span>
+        </div>
+        <div class="pricing-save" style="display:none;color:#22c55e;font-size:13px;margin-top:4px;min-height:18px;">Save €118 per year</div>
+        <div class="pricing-desc">For large chains, hotel groups and franchises.</div>
+        <ul class="pricing-features">
+          <li><span class="check-icon">✓</span> Unlimited locations</li>
+          <li><span class="check-icon">✓</span> Unlimited staff members</li>
+          <li><span class="check-icon">✓</span> Unlimited history storage</li>
+          <li><span class="check-icon">✓</span> Advanced analytics</li>
+          <li><span class="check-icon">✓</span> Unlimited checklists</li>
+          <li><span class="check-icon">✓</span> Photo task confirmations</li>
+          <li><span class="check-icon">✓</span> 50+ template library</li>
+        </ul>
+        <a href="/register" class="btn btn-outline pricing-cta">Get Started Free</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function setPricing(period) {
+  const isYearly = period === 'yearly';
+  document.getElementById('toggle-monthly').style.background = isYearly ? 'transparent' : '#FF5C28';
+  document.getElementById('toggle-monthly').style.color = isYearly ? 'rgba(255,255,255,0.5)' : '#fff';
+  document.getElementById('toggle-yearly').style.background = isYearly ? '#FF5C28' : 'transparent';
+  document.getElementById('toggle-yearly').style.color = isYearly ? '#fff' : 'rgba(255,255,255,0.5)';
+
+  document.querySelectorAll('.price-val').forEach(el => {
+    el.textContent = isYearly ? el.dataset.yearly : el.dataset.monthly;
+  });
+  document.querySelectorAll('.price-per').forEach(el => {
+    el.textContent = isYearly ? '/yr' : '/mo';
+  });
+  document.querySelectorAll('.pricing-save').forEach(el => {
+    el.style.display = isYearly ? 'block' : 'none';
+  });
+}
+</script>
+
+<!-- SECTION: faq -->
+<section id="faq">
+  <div class="container">
+    <div class="text-center reveal">
+      <h2 class="section-title">Got questions? <span style="color: var(--blue);">We've got answers.</span></h2>
+    </div>
+    <div class="faq-list reveal" style="transition-delay: 0.1s;">
+      <div class="faq-item">
+        <div class="faq-question">
+          Do I need a credit card to start the free trial?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">No — and you never have to. RosterDuty has a free plan that never expires. You can use it forever with no credit card required. If you need more locations or staff, you can upgrade to a paid plan at any time.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          How long does setup take?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Under 10 minutes for most restaurants. Create your account, add your locations and team members, pick your templates, and you're live. No IT support or technical knowledge required.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          Do you provide ready-made checklist templates?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes! 50+ professional templates covering opening and closing procedures, HACCP food safety compliance, kitchen cleaning, bar setup, server sidework, inventory checks, bathroom inspections, and more. Use them as-is or customize every detail to match your standards.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          Can I customize checklists for my restaurant?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Fully. Add, remove, and reorder checklist items. Attach photo requirements, set time windows for task completion, assign tasks by department or individual staff member. Every template is a starting point — the finished checklist is yours.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          Does it work for restaurant chains with multiple locations?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes, multi-location support is built in from day one. Manage all your locations from a single dashboard, standardize procedures across sites, and view per-location reporting. The Growth and Enterprise plans are designed specifically for chains and groups.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          What happens after the 3-month free trial ends?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">For the first 3 months you get full access to all Corporate features — free. After that, your account automatically moves to the free plan (1 location, 5 staff, 3 templates). You can stay on the free plan forever at no cost, or upgrade to Professional or Corporate at any time to get everything back. We never auto-charge without your consent.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          Is there a mobile app for staff?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes. Staff get a dedicated mobile app available on iOS and Android. They activate their account with a simple invite code sent by the manager, then sign in to see their tasks, check off items, add photos and comments. Designed for fast use during a busy shift.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: cta-banner -->
+<section id="cta-banner">
+  <div class="container">
+    <div class="cta-banner-inner reveal">
+      <h2>Start running your restaurant smarter — today.</h2>
+      <p>Join 200+ restaurants. 50+ templates included. 3 months completely free.</p>
+      <a href="/register" class="btn btn-primary btn-lg">Create Your Free Account →</a>
+      <div class="cta-banner-trust">
+        <span><span class="check">✓</span> No credit card</span>
+        <span><span class="check">✓</span> Cancel anytime</span>
+        <span><span class="check">✓</span> 50+ templates included</span>
+        <span><span class="check">✓</span> 5-min setup</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: footer -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">Roster<span>Duty</span></div>
+        <p class="tagline">RosterDuty — Restaurant Operations, Automated. Replace paper checklists with smart digital workflows that keep your whole team accountable.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Twitter / X">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#templates">Templates</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#how-it-works">Demo</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+        <h4 style="margin-top: 24px;">Contact</h4>
+        <ul>
+          <li><a href="mailto:hello@rosterduty.com" class="email-link">hello@rosterduty.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 RosterDuty. All rights reserved.</div>
+      <div class="footer-legal-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Floating CTA -->
+<div class="mobile-cta-bar" id="mobileCta">
+  <a href="/register" class="btn btn-primary">🚀 Start Free →</a>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  /* ---------- Navbar scroll ---------- */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  }, { passive: true });
+
+  /* ---------- Hamburger / Mobile nav ---------- */
+  const hamburger = document.getElementById('hamburger');
+  const navMobile = document.getElementById('navMobile');
+  const navClose  = document.getElementById('navClose');
+
+  hamburger.addEventListener('click', () => navMobile.classList.add('open'));
+  navClose.addEventListener('click',  () => navMobile.classList.remove('open'));
+
+  navMobile.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => navMobile.classList.remove('open'));
+  });
+
+  /* ---------- IntersectionObserver: reveal animations ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  /* ---------- Template badges staggered animation ---------- */
+  const badgesContainer = document.getElementById('templateBadges');
+  const badgeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const badges = entry.target.querySelectorAll('.template-badge');
+        badges.forEach((badge, i) => {
+          badge.style.animationDelay = `${i * 0.07}s`;
+          badge.style.animationPlayState = 'running';
+        });
+        badgeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  if (badgesContainer) {
+    // Pause all badges initially
+    badgesContainer.querySelectorAll('.template-badge').forEach(b => {
+      b.style.animationPlayState = 'paused';
+    });
+    badgeObserver.observe(badgesContainer);
+  }
+
+  /* ---------- Counter animation ---------- */
+  function animateCounter(el, target, duration) {
+    const start = performance.now();
+    const step = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+  }
+
+  let countersStarted = false;
+  const heroSection = document.getElementById('hero');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !countersStarted) {
+        countersStarted = true;
+        document.querySelectorAll('.counter-num').forEach(el => {
+          const target = parseInt(el.dataset.target, 10);
+          animateCounter(el, target, 1800);
+        });
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  if (heroSection) counterObserver.observe(heroSection);
+
+  /* ---------- FAQ accordion ---------- */
+  document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+      const item = question.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+
+      // Open clicked if it was closed
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  /* ---------- Mobile floating CTA ---------- */
+  const mobileCta = document.getElementById('mobileCta');
+  let heroBottom = 0;
+
+  function calcHeroBottom() {
+    if (heroSection) {
+      heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+    }
+  }
+
+  calcHeroBottom();
+  window.addEventListener('resize', calcHeroBottom, { passive: true });
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > heroBottom - 200) {
+      mobileCta.classList.add('visible');
+    } else {
+      mobileCta.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  /* ---------- Smooth scroll for all anchor links ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        const navHeight = navbar.offsetHeight;
+        const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
